@@ -46,9 +46,29 @@ func (Go) Test() error {
 
 func (Go) Build() error {
 	color.Cyan("# Building app...")
+
+	version := os.Getenv("VCS_TAG")
+	if version == "" {
+		version, _ = sh.Output("git", "describe", "--tags")
+	}
+	if version == "" {
+		version, _ = sh.Output("git", "rev-parse", "HEAD")
+		version = "X.X.X-" + version
+	}
+
+	varsSetByLinker := map[string]string{
+		"github.com/nikolalohinski/gofsud/app/configuration.ServiceVersion": version,
+		"github.com/nikolalohinski/gofsud/app/configuration.ServiceName":    "gofsud",
+	}
+	var linkerArgs []string
+	for name, value := range varsSetByLinker {
+		linkerArgs = append(linkerArgs, "-X", fmt.Sprintf("%s=%s", name, value))
+	}
+	linkerArgs = append(linkerArgs, "-s", "-w")
+
 	return sh.RunWith(map[string]string{
 		"CGO_ENABLED": "0",
-	}, "go", "build", "-mod=vendor", "-o", ".local/bin/gosfud", "./app")
+	}, "go", "build", "-ldflags", strings.Join(linkerArgs, " "), "-mod=vendor", "-o", ".local/bin/gosfud", "./app")
 }
 
 func (g Go) Run() error {

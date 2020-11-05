@@ -11,7 +11,7 @@ var Default = Build
 
 func Build() {
 	color.Red("# Installing tools")
-	if err :=sh.RunV("go", "run", "-mod=mod", "github.com/izumin5210/gex/cmd/gex", "--build"); err != nil {
+	if err := sh.RunV("go", "run", "-mod=mod", "github.com/izumin5210/gex/cmd/gex", "--build"); err != nil {
 		panic(err)
 	}
 }
