@@ -35,9 +35,11 @@ func LoadConfiguration() (configuration Configuration, err error) {
 	if err := envconfig.Process(EnvPrefix, &configuration); err != nil {
 		return configuration, errors.Wrap(err, "failed to parse env vars")
 	}
+
 	if configuration.ServiceName == "" {
 		configuration.ServiceName = ServiceName
 	}
+
 	if configuration.ServiceVersion == "" {
 		configuration.ServiceVersion = ServiceVersion
 	}

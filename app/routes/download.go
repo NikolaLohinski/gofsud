@@ -17,6 +17,7 @@ func (h *fileHandler) Download(w http.ResponseWriter, r *http.Request) {
 		writeError(w, errors.New("missing file path"), http.StatusBadRequest)
 		return
 	}
+	log.Infof("About to download %s file", name)
 
 	path := filepath.Clean(filepath.Join(h.Configuration.Directory, name))
 	if _, err := os.Stat(path); os.IsNotExist(err) {

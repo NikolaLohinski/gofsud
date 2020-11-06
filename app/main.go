@@ -17,12 +17,6 @@ var (
 	fileHandler routes.FileHandler
 )
 
-func init() {
-	initConfiguration()
-	initLog()
-	initHandler()
-}
-
 func initConfiguration() {
 	var err error
 	config, err = configuration.LoadConfiguration()
@@ -30,7 +24,7 @@ func initConfiguration() {
 }
 
 func initLog() {
-	log.SetFormatter(&log.JSONFormatter{
+	formatter := &log.JSONFormatter{
 		PrettyPrint: config.LogPrettyPrint,
 		FieldMap: log.FieldMap{
 			log.FieldKeyMsg:  "message",
@@ -40,7 +34,8 @@ func initLog() {
 		CallerPrettyfier: func(_ *runtime.Frame) (function string, file string) {
 			return config.ServiceVersion, config.ServiceName
 		},
-	})
+	}
+	log.SetFormatter(formatter)
 	log.SetLevel(config.LogLevel)
 	log.SetOutput(os.Stdout)
 	log.SetReportCaller(true)
@@ -51,6 +46,10 @@ func initHandler() {
 }
 
 func main() {
+	initConfiguration()
+	initLog()
+	initHandler()
+
 	router := mux.NewRouter()
 	subRouter := router.PathPrefix(fmt.Sprintf("/api/v%v", config.GetAPIVersion())).Subrouter()
 

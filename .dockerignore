@@ -1,0 +1,15 @@
+# ignore everything
+*
+
+# CI Need
+!.git/
+!go.mod
+!tools/
+tools/bin
+tools/vendor
+!spellbook/
+!magefile.go
+!.golangci.yml
+
+# App
+!app/
