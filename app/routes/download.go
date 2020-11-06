@@ -36,5 +36,6 @@ func (h *fileHandler) Download(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Infof("file %s successfully returned", name)
+	log.Infof("file %s successfully downloaded", name)
+	w.WriteHeader(http.StatusOK)
 }

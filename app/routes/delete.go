@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -20,7 +21,11 @@ func (h *fileHandler) Delete(w http.ResponseWriter, r *http.Request) {
 
 	path := filepath.Clean(filepath.Join(h.Configuration.Directory, name))
 	if _, err := os.Stat(path); os.IsNotExist(err) {
-		writeError(w, errors.Wrap(err, "file does not exist"), http.StatusNotFound)
+		if os.IsNotExist(err) {
+			writeError(w, errors.Wrap(err, "file does not exist"), http.StatusNotFound)
+			return
+		}
+		writeError(w, errors.Wrap(err, "failed to stat file"), http.StatusInternalServerError)
 		return
 	}
 
@@ -29,5 +34,5 @@ func (h *fileHandler) Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Infof("file %s successfully deleted", name)
+	writeSuccess(w, fmt.Sprintf("file %s successfully deleted", name), http.StatusOK)
 }

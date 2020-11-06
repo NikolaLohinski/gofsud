@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"fmt"
+	"encoding/json"
 	"net/http"
 
 	"github.com/nikolalohinski/gofsud/app/configuration"
@@ -32,9 +32,31 @@ type fileHandler struct {
 func writeError(w http.ResponseWriter, err error, status int) {
 	log.Error(err)
 
+	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(status)
 
-	if _, err := w.Write([]byte(fmt.Sprintf("%v Status %s\n", status, http.StatusText(status)))); err != nil {
+	encoder := json.NewEncoder(w)
+	encoder.SetIndent("", "  ")
+	if err := encoder.Encode(map[string]interface{}{
+		"message": err.Error(),
+		"status":  status,
+	}); err != nil {
 		log.Error(errors.Wrap(err, "failed to write error body"))
+	}
+}
+
+func writeSuccess(w http.ResponseWriter, message string, status int) {
+	log.Info(message)
+
+	w.Header().Add("Content-Type", "application/json")
+	w.WriteHeader(status)
+
+	encoder := json.NewEncoder(w)
+	encoder.SetIndent("", "  ")
+	if err := encoder.Encode(map[string]interface{}{
+		"message": message,
+		"status":  status,
+	}); err != nil {
+		log.Error(errors.Wrap(err, "failed to write success body"))
 	}
 }

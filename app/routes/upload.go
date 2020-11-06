@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -44,4 +45,6 @@ func (h *fileHandler) Upload(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Infof("file %s successfully uploaded", name)
+
+	writeSuccess(w, fmt.Sprintf("file %s successfully uploaded", name), http.StatusCreated)
 }
