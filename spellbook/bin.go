@@ -2,7 +2,6 @@ package spellbook
 
 import (
 	"fmt"
-	"os"
 	"strings"
 
 	"github.com/fatih/color"
@@ -15,15 +14,7 @@ type Bin mg.Namespace
 func (Bin) Build() error {
 	color.Cyan("# Building app...")
 
-	version := os.Getenv("VCS_TAG")
-	if version == "" {
-		version, _ = sh.Output("git", "describe", "--tags")
-	}
-
-	if version == "" {
-		version, _ = sh.Output("git", "rev-parse", "HEAD")
-		version = "X.X.X-" + version
-	}
+	version := determineVersion()
 
 	varsSetByLinker := map[string]string{
 		"github.com/nikolalohinski/gofsud/app/configuration.ServiceVersion": version,
