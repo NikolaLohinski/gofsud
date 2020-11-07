@@ -37,7 +37,8 @@ func writeError(w http.ResponseWriter, err error, status int) {
 
 	encoder := json.NewEncoder(w)
 	encoder.SetIndent("", "  ")
-	if err := encoder.Encode(map[string]interface{}{
+
+	if err = encoder.Encode(map[string]interface{}{
 		"message": err.Error(),
 		"status":  status,
 	}); err != nil {
@@ -52,7 +53,9 @@ func writeSuccess(w http.ResponseWriter, message string, status int) {
 	w.WriteHeader(status)
 
 	encoder := json.NewEncoder(w)
+
 	encoder.SetIndent("", "  ")
+
 	if err := encoder.Encode(map[string]interface{}{
 		"message": message,
 		"status":  status,

@@ -14,7 +14,9 @@ import (
 
 var (
 	config      configuration.Configuration
+	formatter   = new(log.JSONFormatter)
 	fileHandler routes.FileHandler
+	server      = new(http.Server)
 )
 
 func initConfiguration() {
@@ -24,21 +26,23 @@ func initConfiguration() {
 }
 
 func initLog() {
-	formatter := &log.JSONFormatter{
-		PrettyPrint: config.LogPrettyPrint,
-		FieldMap: log.FieldMap{
-			log.FieldKeyMsg:  "message",
-			log.FieldKeyFunc: "version",
-			log.FieldKeyFile: "name",
-		},
-		CallerPrettyfier: func(_ *runtime.Frame) (function string, file string) {
-			return config.ServiceVersion, config.ServiceName
-		},
+	formatter.PrettyPrint = config.LogPrettyPrint
+	formatter.FieldMap = log.FieldMap{
+		log.FieldKeyMsg:  "message",
+		log.FieldKeyFunc: "version",
+		log.FieldKeyFile: "name",
+	}
+	formatter.CallerPrettyfier = func(_ *runtime.Frame) (function string, file string) {
+		return config.ServiceVersion, config.ServiceName
 	}
 	log.SetFormatter(formatter)
 	log.SetLevel(config.LogLevel)
 	log.SetOutput(os.Stdout)
 	log.SetReportCaller(true)
+}
+
+func initServer() {
+	server.Addr = fmt.Sprintf(":%v", config.ServicePort)
 }
 
 func initHandler() {
@@ -48,6 +52,7 @@ func initHandler() {
 func main() {
 	initConfiguration()
 	initLog()
+	initServer()
 	initHandler()
 
 	router := mux.NewRouter()
@@ -57,10 +62,8 @@ func main() {
 	subRouter.HandleFunc("/files/{"+routes.FilePathKey+":.*}", fileHandler.Delete).Methods(http.MethodDelete)
 	subRouter.HandleFunc("/files/{"+routes.FilePathKey+":.*}", fileHandler.Upload).Methods(http.MethodPut)
 
-	server := &http.Server{
-		Addr:    fmt.Sprintf(":%v", config.ServicePort),
-		Handler: router,
-	}
+	server.Handler = router
+
 	log.Infof("starting server on port %v", config.ServicePort)
 	checkErrorAndExit(server.ListenAndServe())
 }
@@ -69,5 +72,6 @@ func checkErrorAndExit(err error) {
 	if err == nil {
 		return
 	}
+
 	log.Fatal(err.Error())
 }

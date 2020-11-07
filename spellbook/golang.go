@@ -67,6 +67,7 @@ func getGoFiles() []string {
 		}
 		absPath := strings.Replace(path, os.Getenv("PWD"), ".", 1)
 		goFiles = append(goFiles, absPath)
+
 		return nil
 	})
 	if err != nil {

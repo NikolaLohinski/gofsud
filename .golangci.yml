@@ -21,17 +21,6 @@ linters:
   enable-all: true
   disable:
   - gochecknoglobals
-  - wsl
-  - nlreturn
-  - exhaustivestruct
-  #   - gomnd
-  #   - wsl
-  #   - bodyclose
-  #   - unparam
-  #   - lll
-  #   - gochecknoglobals
-  #   - gochecknoinits
-  #   - dupl
 
 output:
   format: colored-line-number

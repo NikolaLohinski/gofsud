@@ -46,6 +46,8 @@ func (b Bin) Run() error {
 	if err := b.Build(); err != nil {
 		return err
 	}
+
 	color.Cyan("# Starting app...")
+
 	return sh.RunV(".local/bin/gofsud")
 }
