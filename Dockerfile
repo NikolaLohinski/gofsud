@@ -1,3 +1,4 @@
+ARG VCS_TAG=""
 ARG GO_IMAGE_VERSION
 ARG DISTROLESS_IMAGE
 ARG DISTROLESS_VERSION
@@ -38,7 +39,7 @@ RUN     mage
 
 # Builder
 FROM    source AS builder
-RUN     mage bin:build
+RUN     export VCS_TAG=$VCS_TAG && mage bin:build
 RUN     set -eux; \
         upx -9 .local/bin/gofsud && \
         chmod +x .local/bin/gofsud
