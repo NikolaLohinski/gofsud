@@ -1,12 +1,10 @@
-name: ci
-
+name: ci/cd
 on:
   push: 
     branches:
       - feat/docker-actions
-
 jobs:
-  main:
+  gofsud-image:
     runs-on: ubuntu-latest
     steps:
       - name: Set up QEMU
@@ -18,6 +16,9 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
@@ -25,9 +26,9 @@ jobs:
           push: true
           tags: theagentk/gofsud:dev
           build-args: |
+            VCS_TAG=${{ steps.get_version.outputs.VERSION }}
             GO_IMAGE_VERSION=1.15.5-alpine
             DISTROLESS_IMAGE=gcr.io/distroless/static
             DISTROLESS_VERSION=nonroot
-
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
