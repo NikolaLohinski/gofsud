@@ -14,7 +14,7 @@ import (
 
 type Go mg.Namespace
 
-// Run formatting tools on code base
+// Run formatting tools on code base.
 func (Go) Format() error {
 	color.Cyan("# Formatting everything...")
 
@@ -24,7 +24,7 @@ func (Go) Format() error {
 	return sh.RunV("gofumpt", args...)
 }
 
-// Run linter on code base
+// Run linter on code base.
 func (Go) Lint() error {
 	mg.Deps(Go.Format)
 	color.Cyan("# Linting code...")
@@ -32,21 +32,21 @@ func (Go) Lint() error {
 	return sh.RunV("golangci-lint", "run")
 }
 
-// Clean imports
+// Clean imports.
 func (Go) Tidy() error {
 	fmt.Println("# Cleaning go modules...")
 
 	return sh.RunV("go", "mod", "tidy", "-v")
 }
 
-// Vendor dependencies
+// Vendor dependencies.
 func (Go) Dependencies() error {
 	color.Cyan("# Vendoring dependencies...")
 
 	return sh.RunV("go", "mod", "vendor")
 }
 
-// Run unit tests
+// Run unit tests.
 func (Go) Test() error {
 	color.Cyan("# Running unit tests...")
 

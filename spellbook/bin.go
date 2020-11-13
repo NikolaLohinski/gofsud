@@ -11,7 +11,7 @@ import (
 
 type Bin mg.Namespace
 
-// Compile go binaries
+// Compile go binaries.
 func (Bin) Build() error {
 	color.Cyan("# Building app...")
 
@@ -34,7 +34,7 @@ func (Bin) Build() error {
 	}, "go", "build", "-ldflags", strings.Join(linkerArgs, " "), "-mod=vendor", "-o", ".local/bin/gofsud", "./app")
 }
 
-// Start the application
+// Start the application.
 func (b Bin) Run() error {
 	if err := b.Build(); err != nil {
 		return err
