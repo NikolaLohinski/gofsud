@@ -7,6 +7,7 @@ import (
 
 type Docker mg.Namespace
 
+// Build docker image
 func (Docker) Package() error {
 	return sh.RunV(
 		"docker",
@@ -20,6 +21,7 @@ func (Docker) Package() error {
 	)
 }
 
+// Upload docker image to a registry
 func (Docker) Push() error {
 	return sh.RunV("docker", "push", "${IMAGE_DESTINATION:-theagentk/gofsud}")
 }

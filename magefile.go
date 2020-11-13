@@ -36,10 +36,12 @@ func tooling() error {
 	return os.Setenv("PATH", fmt.Sprintf("%s:%s", p, os.Getenv("PATH")))
 }
 
+// Get and install required tools for development
 func Install() error {
 	return sh.RunV("mage", "-d", "./tools")
 }
 
+// Validate code base
 func Verify() {
 	mg.SerialDeps(
 		spellbook.Go.Tidy,

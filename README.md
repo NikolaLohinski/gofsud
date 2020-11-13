@@ -3,7 +3,25 @@ The smallest possible HTTP upload and download file server.
 GoFSUD stands for Golang File Server Upload & Download.
 
 ## API
-* [OpenAPI specification](https://app.swaggerhub.com/apis/AgentKarbon/gofsud/1.0.0)
+* [OpenAPI specification](https://app.swaggerhub.com/apis/AgentKarbon/gofsud)
+
+## Quick start
+
+### Docker
+```shell script
+$ docker run -it --rm --init \
+    --user ${UID} \
+    --publish "8080:8080" \
+    --env GOFSUD_DIRECTORY='/web' \
+    --volume /tmp/gofsud:/web \
+    theagentk/gofsud:latest
+```
+
+### Golang
+Follow the development instructions, and then run:
+```shell script
+$ mage bin:run
+```
 
 ## Development
 ### Requirements
