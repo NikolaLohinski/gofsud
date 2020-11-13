@@ -38,8 +38,6 @@ RUN     mage
 
 # Builder
 FROM    source AS builder
-WORKDIR /tmp/src
-COPY    .git /tmp/src/.git
 RUN     mage bin:build
 RUN     set -eux; \
         upx -9 .local/bin/gofsud && \
