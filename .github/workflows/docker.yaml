@@ -1,8 +1,8 @@
 name: ci/cd
 on:
   push:
-    branches:
-      - feat/docker-actions
+    tags:
+      - '*'
 jobs:
   gofsud-image:
     runs-on: ubuntu-latest
@@ -31,7 +31,7 @@ jobs:
         with:
           push: true
           tags: |
-            theagentk/gofsud:${{ steps.get_version.outputs.BRANCH }}
+            theagentk/gofsud:latest
             theagentk/gofsud:${{ steps.get_version.outputs.VERSION }}
           build-args: |
             VCS_TAG=${{ steps.get_version.outputs.VERSION }}
