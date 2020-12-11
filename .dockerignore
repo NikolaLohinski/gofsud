@@ -2,7 +2,6 @@
 *
 
 # CI Need
-!.git/
 !go.mod
 !tools/
 tools/bin
