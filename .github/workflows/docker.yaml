@@ -1,12 +1,14 @@
 name: ci/cd
 on:
-  push: 
+  push:
     branches:
       - feat/docker-actions
 jobs:
   gofsud-image:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
@@ -18,13 +20,19 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Get the version
         id: get_version
-        run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
+        run: |
+          git fetch --prune --unshallow
+          echo ::set-output name=BRANCH::$(echo $(git branch --show-current | sed -r 's,/,-,g'))
+          echo ::set-output name=REV::$(git rev-parse --short HEAD)
+          echo ::set-output name=VERSION::$(git describe --tags)
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: theagentk/gofsud:dev
+          tags: |
+            theagentk/gofsud:${{ steps.get_version.outputs.BRANCH }}
+            theagentk/gofsud:${{ steps.get_version.outputs.VERSION }}
           build-args: |
             VCS_TAG=${{ steps.get_version.outputs.VERSION }}
             GO_IMAGE_VERSION=1.15.5-alpine
